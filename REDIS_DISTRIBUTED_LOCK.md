@@ -14,3 +14,14 @@ docker pull redis
 docker run --name myredis -d -p 6379:6379 redis
 
 ```
+
+* Lettus 활용 연습
+  * redis-cli에서 실습 (MYSQL의 Named Lock과 거의 비슷 - 레디스를 활용한다는 점과 세션관리에 신경을 안써도 된다는 차이점이 있음.)
+    * ```docker ps``` 후 컨테이너 id 복사
+    * ```docker exec -it {container id} redis-cli```
+    * ```setnx 1 lock``` 명령어를 통해 락을 획득
+    * ```setnx 1 lock``` 이번엔 실패
+    * ```del 1``` 명령어를 통해 락 해제
+    * ```setnx 1 lock``` 성공
+    * ```del 1``` 다시 해제
+    * 
