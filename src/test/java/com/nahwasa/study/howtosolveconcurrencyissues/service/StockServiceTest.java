@@ -3,7 +3,6 @@ package com.nahwasa.study.howtosolveconcurrencyissues.service;
 import com.nahwasa.study.howtosolveconcurrencyissues.domain.Stock;
 import com.nahwasa.study.howtosolveconcurrencyissues.repository.StockRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +20,24 @@ class StockServiceTest {
     @Autowired private StockRepository stockRepository;
     @Autowired private StockService stockService;
 
-    @BeforeEach
-    public void before() {
-        Stock stock = new Stock(1L, 100L);
-
-        stockRepository.save(stock);
-    }
-
     @AfterEach
     public void after() {
         stockRepository.deleteAll();
     }
 
+    private Long initStockAndGetId() {
+        Stock stock = new Stock(1L, 100L);
+        return stockRepository.save(stock).getId();
+    }
+
     @Test
     @DisplayName("quantity는 100에서 1을 감소시키면 99 여야 한다.")
     void stock_decrease() {
-        stockService.decrease(1L, 1L);
+        long id = initStockAndGetId();
 
-        Stock stock = stockRepository.findById(1L).orElseThrow();
+        stockService.decrease(id, 1L);
+
+        Stock stock = stockRepository.findById(id).orElseThrow();
 
         assertThat(stock.getQuantity()).isEqualTo(99L);
     }
@@ -58,6 +57,9 @@ class StockServiceTest {
          *
          * 이후 설명이 길어질 것 같으므로 DATABASE_LOCK.md에서 계속!
          */
+
+        long id = initStockAndGetId();
+
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
@@ -65,7 +67,7 @@ class StockServiceTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    stockService.decrease(1L, 1L);
+                    stockService.decrease(id, 1L);
                 } finally {
                     countDownLatch.countDown();
                 }
@@ -74,7 +76,7 @@ class StockServiceTest {
 
         countDownLatch.await();
 
-        Stock stock = stockRepository.findById(1L).orElseThrow();
+        Stock stock = stockRepository.findById(id).orElseThrow();
 
         assertThat(stock.getQuantity()).isEqualTo(0L);
     }

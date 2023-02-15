@@ -26,6 +26,10 @@ public class Stock {
         return quantity;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void decrease(Long quantity) {
         if (this.quantity - quantity < 0)
             throw new RuntimeException("Not enough stock");
