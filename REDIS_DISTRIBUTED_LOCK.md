@@ -7,3 +7,10 @@
 * Redisson
   * pub-sub 기반으로 Lock 구현 제공 
   * (채널을 하나 만들어서 락을 점유중인 스레드가 락 획득하려고 대기중에 스레드에게 해제를 알려주면 안내를 받은 스레드가 락 획득을 시도하는 방식. 별도의 리트라이 로직 작성X)
+
+* 환경 세팅
+```
+docker pull redis
+docker run --name myredis -d -p 6379:6379 redis
+
+```
