@@ -2,7 +2,6 @@ package com.nahwasa.study.howtosolveconcurrencyissues.service;
 
 import com.nahwasa.study.howtosolveconcurrencyissues.domain.Stock;
 import com.nahwasa.study.howtosolveconcurrencyissues.repository.StockRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class StockServiceTest {
@@ -55,6 +54,7 @@ class StockServiceTest {
          *   이 때, 실제 DB에 업데이트 하기 전에 다른 스레드가 decrease 메소드를 호출할 수 있어 문제가 발생한다.
          *   즉, synchronized 걸린건 decrease인데 TransactionStockService보면 @Transactional 붙은애가 저렇게 동작하므로
          *   decrease와 endTransaction 사이에 다른 스레드가 decrease를 호출할 수 있는 상황이다.
+         * 3. 그러므로 @Transactional을 제거하면 테스트는 성공한다.
          */
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
