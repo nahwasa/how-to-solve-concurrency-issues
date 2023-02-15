@@ -55,6 +55,8 @@ class StockServiceTest {
          *   즉, synchronized 걸린건 decrease인데 TransactionStockService보면 @Transactional 붙은애가 저렇게 동작하므로
          *   decrease와 endTransaction 사이에 다른 스레드가 decrease를 호출할 수 있는 상황이다.
          * 3. 그러므로 @Transactional을 제거하면 테스트는 성공한다.
+         *
+         * 이후 설명이 길어질 것 같으므로 DATABASE_LOCK.md에서 계속!
          */
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
