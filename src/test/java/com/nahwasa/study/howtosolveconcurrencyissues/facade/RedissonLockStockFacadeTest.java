@@ -15,16 +15,16 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@DisplayName("Lettuce를 사용한 동시성 테스트에서는")
-class LettuceLockStockFacadeTest {
+@DisplayName("Redisson을 사용한 동시성 테스트에서는")
+class RedissonLockStockFacadeTest {
 
     @Autowired private StockRepository stockRepository;
-    @Autowired private LettuceLockStockFacade lettuceLockStockFacade;
+    @Autowired private RedissonLockStockFacade redissonLockStockFacade;
 
     /**
-     * Lettuce를 통한 해결!
-     * 장점 : 구현이 간단
-     * 단점 : 스핀락 방식이므로 레디스에 부하를 줄 수 있음. -> Thread.sleep(100)으로 부하를 줄이긴 해서 어느정도 괜찮음.
+     * Redisson Lock을 통한 해결!
+     * 장점 : Lettuce보다 레디스에 부하가 덜감
+     * 단점 : 구현이 좀 더 복잡하고 별도의 라이브러리를 사용해야 함.
      */
     @AfterEach
     public void after() {
@@ -48,9 +48,7 @@ class LettuceLockStockFacadeTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    lettuceLockStockFacade.decrease(id, 1L);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    redissonLockStockFacade.decrease(id, 1L);
                 } finally {
                     countDownLatch.countDown();
                 }

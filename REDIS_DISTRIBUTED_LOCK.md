@@ -12,7 +12,6 @@
 ```
 docker pull redis
 docker run --name myredis -d -p 6379:6379 redis
-
 ```
 
 * Lettus 활용 연습
@@ -24,4 +23,10 @@ docker run --name myredis -d -p 6379:6379 redis
     * ```del 1``` 명령어를 통해 락 해제
     * ```setnx 1 lock``` 성공
     * ```del 1``` 다시 해제
-    * 
+
+* Redisson 활용 연습
+  * 위와 마찬가지로 redis-cli에서 실습. A와 B 두 터미널에 redis-cli 실행
+    * A 터미널에서 ```subscribe ch1``` 명령어를 통해 채널 구독
+    * B 터미널에서 ```publish ch1 hello``` 명령어를 통해 메시지 전송
+    * A 터미널 보면 '3) "hello"' 라고 메시지 뜸.
+  * 위처럼 메시지 보내서 락 해제를 하라고 메시지를 보내므로 위 스핀락보다 락 획득 시도가 적어서 레디스 부하를 줄일 수 있음.
